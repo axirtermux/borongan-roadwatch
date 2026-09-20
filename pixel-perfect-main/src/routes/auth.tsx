@@ -54,7 +54,17 @@ function AuthPage() {
     });
     setBusy(false);
     if (error) {
-      toast.error(error.message);
+      if (
+        error.message.toLowerCase().includes("email not confirmed") ||
+        error.message.toLowerCase().includes("invalid login credentials")
+      ) {
+        toast.error(
+          "Login failed. If you recently registered, your Supabase project requires email confirmation first. Please verify the link in your email, or turn off 'Confirm Email' in Supabase Auth Settings.",
+          { duration: 8000 }
+        );
+      } else {
+        toast.error(error.message);
+      }
       return;
     }
     toast.success("Welcome back.");
@@ -87,10 +97,13 @@ function AuthPage() {
       return;
     }
     if (data.session) {
-      toast.success("Account created.");
+      toast.success("Account created and signed in!");
       navigate({ to: "/dashboard" });
     } else {
-      toast.success("Account created. Check your email to confirm your address.");
+      toast.info(
+        "Account created! Please check your email inbox to confirm your address before signing in (or disable 'Confirm email' in Supabase Auth Settings to allow instant sign-ins).",
+        { duration: 9000 }
+      );
       setTab("login");
     }
   };

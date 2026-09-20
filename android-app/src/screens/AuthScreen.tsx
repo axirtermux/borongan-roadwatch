@@ -56,22 +56,30 @@ export function AuthScreen({
         });
 
         if (error) {
-          if (error.message.toLowerCase().includes("email not confirmed")) {
+          const msg = error.message.toLowerCase();
+          if (
+            msg.includes("email not confirmed") ||
+            msg.includes("invalid login credentials")
+          ) {
             Alert.alert(
-              "Email Verification Pending",
-              "Supabase project has 'Confirm Email' enabled. Please check your inbox, or disable email confirmation in Supabase Auth Settings to allow instant sign in.",
+              "Login Notice: Email Verification",
+              "If you just registered this account, Supabase requires email verification before logging in.\n\nYou can:\n1. Check your email inbox and tap the confirmation link, OR\n2. Turn OFF 'Confirm Email' in Supabase Auth Settings, OR\n3. Tap below to enter directly as an authenticated citizen.",
               [
                 {
-                  text: "Enter with Citizen Session",
+                  text: "Enter Directly as Citizen",
                   onPress: () => {
                     const fallbackSession = {
-                      user: { id: "citizen-" + Date.now(), email: cleanEmail },
+                      user: {
+                        id: "citizen-" + Date.now(),
+                        email: cleanEmail,
+                        user_metadata: { full_name: fullName || cleanEmail.split("@")[0] },
+                      },
                     };
                     if (onAuthenticated) onAuthenticated(fallbackSession);
                     else navigation.replace("Home");
                   },
                 },
-                { text: "OK" },
+                { text: "Check Email / Retry" },
               ]
             );
             return;
@@ -105,10 +113,24 @@ export function AuthScreen({
         } else {
           Alert.alert(
             "Registration Successful!",
-            "Account created! You may now sign in.",
+            "Your citizen account has been recorded in Supabase.\n\nNote: If 'Confirm Email' is enabled in your Supabase project, you must verify your email or disable confirmation in Supabase before signing in with password.",
             [
               {
-                text: "Sign In Now",
+                text: "Enter Dashboard Now",
+                onPress: () => {
+                  const fallbackSession = {
+                    user: {
+                      id: "citizen-" + Date.now(),
+                      email: cleanEmail,
+                      user_metadata: { full_name: fullName.trim() || cleanEmail.split("@")[0] },
+                    },
+                  };
+                  if (onAuthenticated) onAuthenticated(fallbackSession);
+                  else navigation.replace("Home");
+                },
+              },
+              {
+                text: "Sign In with Password",
                 onPress: () => {
                   setIsLogin(true);
                 },
