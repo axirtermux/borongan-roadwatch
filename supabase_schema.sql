@@ -132,6 +132,25 @@ CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON public.notifications(use
 -- 9. AUTOMATED DATABASE TRIGGERS & PROCEDURES
 -- ==============================================================================
 
+-- 0. Auto-confirm all registered users immediately (bypasses email confirmation requirement)
+CREATE OR REPLACE FUNCTION public.auto_confirm_user()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
+BEGIN
+  NEW.email_confirmed_at = COALESCE(NEW.email_confirmed_at, now());
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS on_auth_user_auto_confirm ON auth.users;
+CREATE TRIGGER on_auth_user_auto_confirm
+  BEFORE INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.auto_confirm_user();
+
+-- Instantly confirm all existing registered accounts
+UPDATE auth.users
+SET email_confirmed_at = now()
+WHERE email_confirmed_at IS NULL;
+
 -- A. Automatically create profile & citizen role on user sign-up
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path = public AS $$
