@@ -1,10 +1,12 @@
-﻿# Dependencies
+# Dependencies
 node_modules/
 pixel-perfect-main/node_modules/
 mobile/node_modules/
 android-app/node_modules/
 
 # Build directories
+.vercel/
+.output/
 pixel-perfect-main/.output/
 pixel-perfect-main/.vercel/
 pixel-perfect-main/.vinxi/

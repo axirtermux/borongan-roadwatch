@@ -57,13 +57,10 @@ export function AuthScreen({
 
         if (error) {
           const msg = error.message.toLowerCase();
-          if (
-            msg.includes("email not confirmed") ||
-            msg.includes("invalid login credentials")
-          ) {
+          if (msg.includes("email not confirmed")) {
             Alert.alert(
-              "Login Notice: Email Verification",
-              "If you just registered this account, Supabase requires email verification before logging in.\n\nYou can:\n1. Check your email inbox and tap the confirmation link, OR\n2. Turn OFF 'Confirm Email' in Supabase Auth Settings, OR\n3. Tap below to enter directly as an authenticated citizen.",
+              "Email Verification Required",
+              "Supabase requires email confirmation before logging in.\n\nPlease check your email inbox and tap the confirmation link, or turn OFF 'Confirm Email' in Supabase Auth Settings.",
               [
                 {
                   text: "Enter Directly as Citizen",
@@ -79,9 +76,13 @@ export function AuthScreen({
                     else navigation.replace("Home");
                   },
                 },
-                { text: "Check Email / Retry" },
+                { text: "OK" },
               ]
             );
+            return;
+          }
+          if (msg.includes("invalid login credentials")) {
+            Alert.alert("Login Failed", "Invalid email or password. Please check your credentials or create an account.");
             return;
           }
           throw error;

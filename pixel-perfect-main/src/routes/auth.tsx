@@ -54,14 +54,14 @@ function AuthPage() {
     });
     setBusy(false);
     if (error) {
-      if (
-        error.message.toLowerCase().includes("email not confirmed") ||
-        error.message.toLowerCase().includes("invalid login credentials")
-      ) {
+      const msg = error.message.toLowerCase();
+      if (msg.includes("email not confirmed")) {
         toast.error(
-          "Login failed. If you recently registered, your Supabase project requires email confirmation first. Please verify the link in your email, or turn off 'Confirm Email' in Supabase Auth Settings.",
+          "Login failed: Your email is not confirmed yet. Please check your inbox or ensure 'Confirm Email' is disabled in Supabase.",
           { duration: 8000 }
         );
+      } else if (msg.includes("invalid login credentials")) {
+        toast.error("Invalid email or password. Please check your details or register a new account.");
       } else {
         toast.error(error.message);
       }
