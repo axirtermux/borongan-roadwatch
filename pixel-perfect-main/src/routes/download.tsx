@@ -72,7 +72,21 @@ function DownloadPage() {
                   asChild
                 >
                   <a href="/downloads/borongan-roadwatch.apk" download="borongan-roadwatch.apk">
-                    <Download className="size-5" /> Download Android APK (Direct)
+                    <Download className="size-5" /> Download APK (Direct)
+                  </a>
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="gap-2.5 text-base font-semibold border-white/40 text-white hover:bg-white/10 hover:text-white"
+                  asChild
+                >
+                  <a
+                    href="https://github.com/axirtermux/borongan-roadwatch/releases/download/v1.0.0/borongan-roadwatch.apk"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Download className="size-5" /> GitHub Mirror (CDN)
                   </a>
                 </Button>
                 <span className="text-xs text-white/80">Version 1.0.0 · Free for Citizens</span>

@@ -89,8 +89,17 @@ export function DownloadApkModal({
                     <Download className="size-5" /> Download Android APK (Direct)
                   </a>
                 </Button>
+                <Button size="sm" variant="outline" className="w-full gap-2 text-xs" asChild>
+                  <a
+                    href="https://github.com/axirtermux/borongan-roadwatch/releases/download/v1.0.0/borongan-roadwatch.apk"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Download className="size-3.5" /> Fast CDN Mirror (GitHub Releases)
+                  </a>
+                </Button>
                 <p className="text-center text-[11px] text-muted-foreground">
-                  Direct download hosted securely by the City Government of Borongan.
+                  Direct download hosted securely by the City Government of Borongan & GitHub CDN.
                 </p>
               </div>
 
