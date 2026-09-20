@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "Borongan RoadWatch",
+    "slug": "borongan-roadwatch-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1e3a8a"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "Borongan RoadWatch requires access to the camera to capture photographic evidence of routine road damage.",
+        "NSLocationWhenInUseUsageDescription": "Borongan RoadWatch uses smartphone GPS hardware to pinpoint the geographical coordinates of reported road hazards in Borongan City.",
+        "NSPhotoLibraryUsageDescription": "Borongan RoadWatch requires access to the photo library to upload existing photos of road defects."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1e3a8a"
+      },
+      "permissions": [
+        "CAMERA",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
+      "package": "gov.ph.borongan.roadwatch"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-asset"
+    ]
+  }
+}

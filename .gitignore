@@ -1,0 +1,41 @@
+﻿# Dependencies
+node_modules/
+pixel-perfect-main/node_modules/
+mobile/node_modules/
+android-app/node_modules/
+
+# Build directories
+pixel-perfect-main/.output/
+pixel-perfect-main/.vercel/
+pixel-perfect-main/.vinxi/
+pixel-perfect-main/.tanstack/
+pixel-perfect-main/.nitro/
+pixel-perfect-main/dist/
+dist/
+build/
+
+# Expo caches
+.expo/
+**/.expo/
+
+# Android Native Build artifacts & caches
+android-app/android/.gradle/
+android-app/android/app/build/
+android-app/android/build/
+android-app/android/.cxx/
+android-app/android/local.properties
+.gradle/
+**/.gradle/
+build/
+**/build/
+
+# Large APK binaries (avoid GitHub 100MB limit)
+*.apk
+
+# Logs & temp
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+.DS_Store
+Thumbs.db
