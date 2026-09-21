@@ -128,11 +128,13 @@ function AuthPage() {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="civic-gradient relative hidden flex-col justify-between p-12 text-primary-foreground lg:flex">
-        <Link to="/" className="flex items-center gap-2.5">
-          <span className="flex size-9 items-center justify-center rounded-lg bg-white/15">
-            <MapPinned className="size-5" />
-          </span>
-          <span className="font-display font-semibold">Borongan RoadWatch</span>
+        <Link to="/" className="flex items-center gap-3">
+          <img
+            src="/dpwh-logo.png"
+            alt="DPWH Official Seal"
+            className="h-10 w-auto max-w-16 shrink-0 object-contain drop-shadow-xs"
+          />
+          <span className="font-display font-semibold text-lg">Borongan RoadWatch</span>
         </Link>
         <div>
           <h1 className="font-display text-4xl leading-tight font-bold">

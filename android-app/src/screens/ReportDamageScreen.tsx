@@ -11,6 +11,7 @@ import {
   Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import { decode } from "base64-arraybuffer";
 import { supabase, BARANGAYS, BORONGAN_CENTER } from "../config/supabase";
 import { requestAndGetGPSLocation, verifyCoordinates } from "../services/location";
 import {
@@ -31,6 +32,7 @@ const DAMAGE_TYPES: { key: DamageType; label: string }[] = [
 
 export function ReportDamageScreen({ navigation }: { navigation: any }) {
   const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [photoBase64, setPhotoBase64] = useState<string | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [roadName, setRoadName] = useState("");
@@ -90,31 +92,46 @@ export function ReportDamageScreen({ navigation }: { navigation: any }) {
   }, []);
 
   const takePhotoWithCamera = async () => {
-    const perm = await ImagePicker.requestCameraPermissionsAsync();
-    if (!perm.granted) {
-      Alert.alert("Permission Required", "Camera access is needed to capture photographic evidence.");
-      return;
-    }
-    const res = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.8,
-      allowsEditing: true,
-      aspect: [4, 3],
-    });
-    if (!res.canceled && res.assets[0].uri) {
-      setPhotoUri(res.assets[0].uri);
+    try {
+      const perm = await ImagePicker.requestCameraPermissionsAsync();
+      if (!perm.granted) {
+        Alert.alert("Permission Required", "Camera access is needed to capture photographic evidence.");
+        return;
+      }
+      const res = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.7,
+        allowsEditing: false,
+        base64: true,
+      });
+      if (!res.canceled && res.assets && res.assets.length > 0) {
+        setPhotoUri(res.assets[0].uri);
+        setPhotoBase64(res.assets[0].base64 || null);
+      }
+    } catch (err: any) {
+      Alert.alert("Camera Error", err.message || "Could not launch camera.");
     }
   };
 
   const pickPhotoFromGallery = async () => {
-    const res = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.8,
-      allowsEditing: true,
-      aspect: [4, 3],
-    });
-    if (!res.canceled && res.assets[0].uri) {
-      setPhotoUri(res.assets[0].uri);
+    try {
+      const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!perm.granted) {
+        Alert.alert("Permission Required", "Gallery permission is required to choose photo evidence.");
+        return;
+      }
+      const res = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.7,
+        allowsEditing: false,
+        base64: true,
+      });
+      if (!res.canceled && res.assets && res.assets.length > 0) {
+        setPhotoUri(res.assets[0].uri);
+        setPhotoBase64(res.assets[0].base64 || null);
+      }
+    } catch (err: any) {
+      Alert.alert("Gallery Error", err.message || "Could not access photo library.");
     }
   };
 
@@ -151,19 +168,40 @@ export function ReportDamageScreen({ navigation }: { navigation: any }) {
 
       setUploadStep("Uploading photo evidence...");
 
-      // Prepare file upload
-      const response = await fetch(photoUri);
-      const blob = await response.blob();
       const filename = `${user.id}/${Date.now()}.jpg`;
 
-      const { error: uploadError } = await supabase.storage
-        .from("damage-photos")
-        .upload(filename, blob, { contentType: "image/jpeg" });
+      if (photoBase64) {
+        const fileData = decode(photoBase64);
+        const { error: uploadError } = await supabase.storage
+          .from("damage-photos")
+          .upload(filename, fileData, {
+            contentType: "image/jpeg",
+            upsert: true,
+          });
 
-      if (uploadError) {
-        throw new Error(
-          `Photo upload session failed: ${uploadError.message}. Per Limitation 6, stable network is required.`,
-        );
+        if (uploadError) {
+          if (uploadError.message?.includes("Bucket not found") || (uploadError as any).statusCode === "404") {
+            throw new Error(
+              "Supabase Storage bucket 'damage-photos' was not found. Please create the public bucket 'damage-photos' in your Supabase Storage dashboard."
+            );
+          }
+          throw new Error(`Photo upload failed: ${uploadError.message}`);
+        }
+      } else {
+        const response = await fetch(photoUri);
+        const blob = await response.blob();
+        const { error: uploadError } = await supabase.storage
+          .from("damage-photos")
+          .upload(filename, blob, { contentType: "image/jpeg", upsert: true });
+
+        if (uploadError) {
+          if (uploadError.message?.includes("Bucket not found") || (uploadError as any).statusCode === "404") {
+            throw new Error(
+              "Supabase Storage bucket 'damage-photos' was not found. Please create the public bucket 'damage-photos' in your Supabase Storage dashboard."
+            );
+          }
+          throw new Error(`Photo upload failed: ${uploadError.message}`);
+        }
       }
 
       setUploadStep("Storing incident metadata & automated classification...");

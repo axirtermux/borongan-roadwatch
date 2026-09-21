@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Bell, LayoutDashboard, LogOut, MapPinned, Menu, Plus, Smartphone } from "lucide-react";
+import { Bell, LayoutDashboard, LogOut, Menu, Plus, Smartphone } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -33,15 +33,12 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur shadow-xs">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
-        <Link to="/" className="flex items-center gap-2.5">
+        <Link to="/" className="flex items-center gap-3">
           <img
             src="/dpwh-logo.png"
             alt="DPWH Official Seal"
-            className="h-9 w-auto max-w-16 shrink-0 object-contain drop-shadow-xs"
+            className="h-10 w-auto max-w-16 shrink-0 object-contain drop-shadow-xs"
           />
-          <span className="flex size-9 items-center justify-center rounded-lg civic-gradient text-primary-foreground shadow-xs">
-            <MapPinned className="size-5" />
-          </span>
           <span className="leading-tight">
             <span className="flex items-center gap-1.5 font-display text-sm font-semibold">
               Borongan RoadWatch
