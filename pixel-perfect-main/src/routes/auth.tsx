@@ -62,6 +62,11 @@ function AuthPage() {
         );
       } else if (msg.includes("invalid login credentials")) {
         toast.error("Invalid email or password. Please check your details or register a new account.");
+      } else if (msg.includes("database error querying schema") || msg.includes("database error finding user")) {
+        toast.error(
+          "Database schema error: This user was created manually via SQL without Auth identities. Please delete this user from auth.users and register via the Register tab.",
+          { duration: 10000 }
+        );
       } else {
         toast.error(error.message);
       }
